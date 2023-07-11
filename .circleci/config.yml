@@ -44,7 +44,7 @@ jobs:
             echo "Tagging Docker image..."
             docker tag xxnlxzx/assignment4.5:initial xxnlxzx/assignment4.5:version1
             echo "Pushing Docker image..."
-            docker push xxnlxzx/assignment4.4:version1
+            docker push xxnlxzx/assignment4.5:version1
 
 workflows:
   simple_workflow:
