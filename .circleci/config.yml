@@ -38,7 +38,7 @@ jobs:
           name: Build and push Docker image
           command: |
             echo "Logging in to Docker Hub..."
-            echo "181287A@n" | docker login -u "xxnlxzx@gmail.com" --password-stdin
+            echo "181287A@n" | docker login -u "xxnlxzx" --password-stdin
             echo "Building Docker image..."
             docker build -t xxnlxzx/assignment4.4:version1 .
             echo "Tagging Docker image..."
