@@ -38,13 +38,13 @@ jobs:
           name: Build and push Docker image
           command: |
             echo "Logging in to Docker Hub..."
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            echo "181287A@n" | docker login -u "xxnlxzx@gmail.com" --password-stdin
             echo "Building Docker image..."
             docker build -t xxnlxzx/assignment4.4:version1 .
             echo "Tagging Docker image..."
-            docker tag my-docker-image "$DOCKER_USERNAME/assignment4.4:version1"
+            docker tag my-docker-image "xxnlxzx/assignment4.4:version1"
             echo "Pushing Docker image..."
-            docker push "$DOCKER_USERNAME/assignment4.4:version1"
+            docker push "xxnlxzx/assignment4.4:version1"
 
 workflows:
   simple_workflow:
