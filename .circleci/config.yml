@@ -40,11 +40,11 @@ jobs:
             echo "Logging in to Docker Hub..."
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             echo "Building Docker image..."
-            docker build -t my-docker-image .
+            docker build -t xxnlxzx/assignment4.4:version1 .
             echo "Tagging Docker image..."
-            docker tag my-docker-image "$DOCKER_USERNAME/my-docker-image:latest"
+            docker tag my-docker-image "$DOCKER_USERNAME/assignment4.4:version1"
             echo "Pushing Docker image..."
-            docker push "$DOCKER_USERNAME/my-docker-image:latest"
+            docker push "$DOCKER_USERNAME/assignment4.4:version1"
 
 workflows:
   simple_workflow:
