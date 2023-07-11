@@ -40,9 +40,9 @@ jobs:
             echo "Logging in to Docker Hub..."
             echo "181287A@n" | docker login -u "xxnlxzx" --password-stdin
             echo "Building Docker image..."
-            docker build -t xxnlxzx/assignment4.4:version1 .
+            docker build -t xxnlxzx/assignment4.4:initial .
             echo "Tagging Docker image..."
-            docker tag my-docker-image "xxnlxzx/assignment4.4:version1"
+            docker tag initial "xxnlxzx/assignment4.4:version1"
             echo "Pushing Docker image..."
             docker push "xxnlxzx/assignment4.4:version1"
 
