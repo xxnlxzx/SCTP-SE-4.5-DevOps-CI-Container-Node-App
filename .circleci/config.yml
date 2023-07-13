@@ -60,7 +60,13 @@ jobs:
       branches:
         ignore:
           - /^main$/
-    # Add the necessary steps for deployment
+    steps:
+      - checkout
+      - run:
+          name: Deploying application
+          command: |
+            echo "Deploying version ${CIRCLE_TAG} to production..."
+            ./deploy.sh "${CIRCLE_TAG}"
 
 workflows:
   simple_workflow:
