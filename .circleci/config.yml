@@ -87,7 +87,7 @@ workflows:
             tags:
               only: /^v.*/
           parameters:
-            tag: "1.0.0"
+            tag: "0.1.0"
     filters:
       branches:
         only: main
