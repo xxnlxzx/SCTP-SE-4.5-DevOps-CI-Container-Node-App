@@ -86,3 +86,7 @@ workflows:
       - deploy:
           requires:
             - build-and-push
+
+default_executors:
+  docker/default:
+    working_directory: ~/repo
