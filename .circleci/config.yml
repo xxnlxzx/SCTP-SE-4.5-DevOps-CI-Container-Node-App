@@ -3,14 +3,10 @@ orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
 
-executors:
-  docker-executor:
-    docker:
-      - image: circleci/node:16.10
-
 jobs:
   build:
-    executor: docker-executor
+    docker:
+      - image: cimg/node:16.10
     steps:
       - checkout
       - node/install-packages:
@@ -20,7 +16,8 @@ jobs:
           command: npm install
 
   test:
-    executor: docker-executor
+    docker:
+      - image: cimg/node:16.10
     steps:
       - checkout
       - node/install-packages:
@@ -30,20 +27,22 @@ jobs:
           command: npm run test
 
   build-and-push:
-    executor: docker-executor
+    docker:
+      - image: circleci/node:16.10
     steps:
       - setup_remote_docker
       - checkout
       - docker/check
       - run:
           name: Building Docker image
-          command: docker build --file=./Dockerfile --tag=docker.io/xxnlxzx/assignment4.5:${CIRCLE_SHA1} .
+          command: docker build --file=./Dockerfile --tag=docker.io/johnsmith/assignment4.5:${CIRCLE_SHA1} .
       - run:
           name: Pushing Docker image
-          command: docker push docker.io/xxnlxzx/assignment4.5:${CIRCLE_SHA1}
+          command: docker push docker.io/johnsmith/assignment4.5:${CIRCLE_SHA1}
 
   deploy:
-    executor: docker-executor
+    docker:
+      - image: circleci/node:16.10
     steps:
       - checkout
       - run:
