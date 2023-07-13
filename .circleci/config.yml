@@ -64,16 +64,10 @@ workflows:
   version: 2
   simple_workflow:
     jobs:
-      - build:
-          filters:
-            branches:
-              only: main
+      - build
       - test:
           requires:
             - build
-          filters:
-            branches:
-              only: main
       - build-and-push:
           requires:
             - test
@@ -86,4 +80,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-
+    filters:
+      branches:
+        only: main
