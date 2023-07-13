@@ -2,28 +2,45 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
+
 jobs:
   build:
+    filters:
+      branches:
+        only:
+          - main
     docker:
       - image: cimg/node:16.10
     steps:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-      - run: |
-          echo "Installing dependencies..."
-          npm install
+      - run:
+          name: Installing dependencies...
+          command: npm install
+
   test:
+    filters:
+      branches:
+        only:
+          - main
     docker:
       - image: cimg/node:16.10
     steps:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-      - run: |
-          echo "Running tests..."
-          npm run test
+      - run:
+          name: Running tests...
+          command: npm run test
+
   build-and-push:
+    filters:
+      tags:
+        only: /.*/
+      branches:
+        ignore:
+          - /^main$/
     executor: docker/docker
     steps:
       - setup_remote_docker
@@ -31,10 +48,19 @@ jobs:
       - docker/check
       - docker/build:
           image: xxnlxzx/assignment4.5
-          tag: 0.1.0
+          tag: '${CIRCLE_TAG}'
       - docker/push:
           image: xxnlxzx/assignment4.5
-          tag: 0.1.0
+          tag: '${CIRCLE_TAG}'
+
+  deploy:
+    filters:
+      tags:
+        only: /.*/
+      branches:
+        ignore:
+          - /^main$/
+    # Add the necessary steps for deployment
 
 workflows:
   simple_workflow:
@@ -46,3 +72,6 @@ workflows:
       - build-and-push:
           requires:
             - test
+      - deploy:
+          requires:
+            - build-and-push
