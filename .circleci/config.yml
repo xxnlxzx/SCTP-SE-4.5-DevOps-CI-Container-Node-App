@@ -2,6 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
+
 jobs:
   build:
     docker:
@@ -13,6 +14,7 @@ jobs:
       - run: |
           echo "Installing dependencies..."
           npm install
+
   test:
     docker:
       - image: cimg/node:16.10
@@ -23,26 +25,64 @@ jobs:
       - run: |
           echo "Running tests..."
           npm run test
+
   build-and-push:
     executor: docker/docker
+    parameters:
+      tag:
+        type: string
+        default: "0.1.0"
     steps:
       - setup_remote_docker
       - checkout
       - docker/check
       - docker/build:
           image: xxnlxzx/assignment4.5
-          tag: 0.1.0
+          tag: << parameters.tag >>
       - docker/push:
           image: xxnlxzx/assignment4.5
-          tag: 0.1.0
+          tag: << parameters.tag >>
+
+  deploy:
+    executor: docker/docker
+    parameters:
+      tag:
+        type: string
+    steps:
+      - setup_remote_docker
+      - checkout
+      - docker/check
+      - docker/pull:
+          image: xxnlxzx/assignment4.5
+          tag: << parameters.tag >>
+      - docker/run:
+          image: xxnlxzx/assignment4.5
+          tag: << parameters.tag >>
+          command: deploy.sh
 
 workflows:
+  version: 2
   simple_workflow:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only: main
       - test:
           requires:
             - build
+          filters:
+            branches:
+              only: main
       - build-and-push:
           requires:
             - test
+          filters:
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
+      - deploy:
+          requires:
+            - build-and-push
+          filters:
+            tags:
+              only: /^v[0-9]+(\.[0-9]+)*$/
