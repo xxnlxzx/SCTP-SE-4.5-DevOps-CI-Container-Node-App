@@ -64,6 +64,22 @@ workflows:
   version: 2
   simple_workflow:
     jobs:
+      - build:
+          filters:
+            branches:
+              only: main
+      - test:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
+      - build-and-push:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v.*/
       - deploy:
           requires:
             - build-and-push
@@ -71,4 +87,5 @@ workflows:
             tags:
               only: /^v.*/
           parameters:
-            tag: "0.1.0"
+            tag:
+              type: string
