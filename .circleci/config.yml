@@ -38,10 +38,10 @@ jobs:
       - docker/check
       - docker/build:
           image: xxnlxzx/assignment4.5
-          tag: << pipeline.git.tag >>
+          tag: << parameters.tag >>
       - docker/push:
           image: xxnlxzx/assignment4.5
-          tag: << pipeline.git.tag >>
+          tag: << parameters.tag >>
 
   deploy:
     executor: docker/docker
@@ -54,19 +54,26 @@ jobs:
       - docker/check
       - docker/pull:
           image: xxnlxzx/assignment4.5
-          tag: << pipeline.git.tag >>
+          tag: << parameters.tag >>
       - docker/run:
           image: xxnlxzx/assignment4.5
-          tag: << pipeline.git.tag >>
+          tag: << parameters.tag >>
           command: deploy.sh
 
 workflows:
+  version: 2
   simple_workflow:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only: main
       - test:
           requires:
             - build
+          filters:
+            branches:
+              only: main
       - build-and-push:
           requires:
             - test
