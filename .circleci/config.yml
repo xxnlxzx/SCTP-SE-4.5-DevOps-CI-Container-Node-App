@@ -1,9 +1,7 @@
 version: 2.1
-
 orbs:
   node: circleci/node@5.0.1
-  docker: circleci/docker@1.2.0
-
+  docker: circleci/docker@2.1.4
 jobs:
   build:
     docker:
@@ -15,7 +13,6 @@ jobs:
       - run: |
           echo "Installing dependencies..."
           npm install
-
   test:
     docker:
       - image: cimg/node:16.10
@@ -26,25 +23,18 @@ jobs:
       - run: |
           echo "Running tests..."
           npm run test
-
-  publish:
-    docker:
-      - image: circleci/node:16.10
+  build-and-push:
+    executor: docker/docker
     steps:
+      - setup_remote_docker
       - checkout
-      - setup_remote_docker:
-          version: 20.10.7
-      - run:
-          name: Build and push Docker image
-          command: |
-            echo "Logging in to Docker Hub..."
-            echo "181287A@n" | docker login -u "xxnlxzx" --password-stdin
-            echo "Building Docker image..."
-            docker build -t xxnlxzx/assignment4.5:initial .
-            echo "Tagging Docker image..."
-            docker tag xxnlxzx/assignment4.5:initial xxnlxzx/assignment4.5:version1
-            echo "Pushing Docker image..."
-            docker push xxnlxzx/assignment4.5:version1
+      - docker/check
+      - docker/build:
+          image: xxnlxzx/assignment4.5
+          tag: 0.1.0
+      - docker/push:
+          image: xxnlxzx/assignment4.5
+          tag: 0.1.0
 
 workflows:
   simple_workflow:
@@ -53,7 +43,6 @@ workflows:
       - test:
           requires:
             - build
-      - publish:
+      - build-and-push:
           requires:
             - test
-
