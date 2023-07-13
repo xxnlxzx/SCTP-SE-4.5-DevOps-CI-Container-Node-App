@@ -11,9 +11,9 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-      - run: |
-          echo "Installing dependencies..."
-          npm install
+      - run:
+          name: Install dependencies
+          command: npm install
 
   test:
     docker:
@@ -22,9 +22,9 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-      - run: |
-          echo "Running tests..."
-          npm run test
+      - run:
+          name: Run tests
+          command: npm run test
 
   build-and-push:
     executor: docker/docker
@@ -86,3 +86,4 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+
