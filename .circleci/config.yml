@@ -61,30 +61,29 @@ jobs:
           command: deploy.sh
 
 workflows:
-  simple_workflow:
   jobs:
-      - build:
-          filters:
-            branches:
-              only: main
-      - test:
-          requires:
-            - build
-          filters:
-            branches:
-              only: main
-      - build-and-push:
-          requires:
-            - test
-          filters:
-            tags:
-              only: /^v.*/
-      - deploy:
-          requires:
-            - build-and-push
-          filters:
-            tags:
-              only: /^v.*/
-    filters:
-      branches:
-        only: main
+    - build:
+        filters:
+          branches:
+             only: main
+    - test:
+        requires:
+           - build
+        filters:
+           branches:
+             only: main
+    - build-and-push:
+        requires:
+           - test
+        filters:
+           tags:
+             only: /^v.*/
+   - deploy:
+        requires:
+          - build-and-push
+         filters:
+          tags:
+            only: /^v.*/
+   filters:
+    branches:
+      only: main
