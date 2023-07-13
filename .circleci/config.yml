@@ -50,6 +50,7 @@ jobs:
             ./deploy.sh "${CIRCLE_TAG}"
 
 workflows:
+  version: 2
   simple_workflow:
     jobs:
       - build:
@@ -70,7 +71,7 @@ workflows:
               only: /.*/
             branches:
               ignore:
-                - /^main$/
+                - main
           requires:
             - test
       - deploy:
@@ -79,6 +80,6 @@ workflows:
               only: /.*/
             branches:
               ignore:
-                - /^main$/
+                - main
           requires:
             - build-and-push
