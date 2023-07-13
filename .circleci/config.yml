@@ -61,9 +61,8 @@ jobs:
           command: deploy.sh
 
 workflows:
-  version: 2
   simple_workflow:
-    jobs:
+  jobs:
       - build:
           filters:
             branches:
