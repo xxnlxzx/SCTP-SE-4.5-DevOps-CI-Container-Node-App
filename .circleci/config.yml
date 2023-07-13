@@ -3,10 +3,14 @@ orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
 
+executors:
+  docker-executor:
+    docker:
+      - image: circleci/node:16.10
+
 jobs:
   build:
-    docker:
-      - image: cimg/node:16.10
+    executor: docker-executor
     steps:
       - checkout
       - node/install-packages:
@@ -16,8 +20,7 @@ jobs:
           command: npm install
 
   test:
-    docker:
-      - image: cimg/node:16.10
+    executor: docker-executor
     steps:
       - checkout
       - node/install-packages:
@@ -27,7 +30,7 @@ jobs:
           command: npm run test
 
   build-and-push:
-    executor: docker/default
+    executor: docker-executor
     steps:
       - setup_remote_docker
       - checkout
@@ -40,7 +43,7 @@ jobs:
           tag: '${CIRCLE_TAG}'
 
   deploy:
-    executor: docker/default
+    executor: docker-executor
     steps:
       - checkout
       - run:
