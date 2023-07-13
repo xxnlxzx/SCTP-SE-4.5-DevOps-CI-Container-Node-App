@@ -13,7 +13,8 @@ jobs:
           pkg-manager: npm
     filters:
       branches:
-        only: main
+        only:
+          - main
 
   test:
     docker:
@@ -26,7 +27,8 @@ jobs:
       - build
     filters:
       branches:
-        only: main
+        only:
+          - main
 
   build-and-push:
     executor: docker/docker
@@ -46,7 +48,8 @@ jobs:
           tag: << parameters.tag >>
     filters:
       tags:
-        only: /^v.*/
+        only:
+          - /^v.*/
 
   deploy:
     executor: docker/docker
@@ -66,14 +69,17 @@ jobs:
           command: deploy.sh
     filters:
       tags:
-        only: /^v.*/
+        only:
+          - /^v.*/
 
 workflows:
   version: 2
   simple_workflow:
     jobs:
       - build
-      - test
+      - test:
+          requires:
+            - build
       - build-and-push:
           requires:
             - test
