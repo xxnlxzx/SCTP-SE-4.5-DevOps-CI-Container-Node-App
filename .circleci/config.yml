@@ -5,10 +5,6 @@ orbs:
 
 jobs:
   build:
-    filters:
-      branches:
-        only:
-          - main
     docker:
       - image: cimg/node:16.10
     steps:
@@ -20,10 +16,6 @@ jobs:
           command: npm install
 
   test:
-    filters:
-      branches:
-        only:
-          - main
     docker:
       - image: cimg/node:16.10
     steps:
@@ -35,12 +27,6 @@ jobs:
           command: npm run test
 
   build-and-push:
-    filters:
-      tags:
-        only: /.*/
-      branches:
-        ignore:
-          - /^main$/
     executor: docker/docker
     steps:
       - setup_remote_docker
@@ -54,12 +40,7 @@ jobs:
           tag: '${CIRCLE_TAG}'
 
   deploy:
-    filters:
-      tags:
-        only: /.*/
-      branches:
-        ignore:
-          - /^main$/
+    executor: docker/docker
     steps:
       - checkout
       - run:
@@ -71,13 +52,33 @@ jobs:
 workflows:
   simple_workflow:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                - main
       - test:
+          filters:
+            branches:
+              only:
+                - main
           requires:
             - build
       - build-and-push:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /^main$/
           requires:
             - test
       - deploy:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore:
+                - /^main$/
           requires:
             - build-and-push
