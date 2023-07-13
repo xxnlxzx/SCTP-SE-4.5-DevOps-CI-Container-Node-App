@@ -60,7 +60,8 @@ jobs:
           tag: << parameters.tag >>
           command: deploy.sh
 
-workflow:
+workflows:
+  version: 2
   simple_workflow:
     jobs:
       - build:
