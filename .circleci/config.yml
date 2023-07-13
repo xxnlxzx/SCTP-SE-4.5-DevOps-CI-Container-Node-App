@@ -35,12 +35,12 @@ jobs:
       - setup_remote_docker
       - checkout
       - docker/check
-      - docker/build:
-          image: xxnlxzx/assignment4.5
-          tag: '${CIRCLE_TAG}'
-      - docker/push:
-          image: xxnlxzx/assignment4.5
-          tag: '${CIRCLE_TAG}'
+      - run:
+          name: Building Docker image
+          command: docker build --file=./Dockerfile --tag=docker.io/johnsmith/assignment4.5:${CIRCLE_SHA1} .
+      - run:
+          name: Pushing Docker image
+          command: docker push docker.io/johnsmith/assignment4.5:${CIRCLE_SHA1}
 
   deploy:
     executor: docker-executor
