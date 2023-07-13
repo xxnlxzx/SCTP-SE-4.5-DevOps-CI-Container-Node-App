@@ -49,7 +49,7 @@ jobs:
           name: Deploying application
           command: |
             echo "Deploying version ${CIRCLE_TAG} to production..."  ## Display the version being deployed
-            ./deploy.sh "${CIRCLE_TAG}"  ## Run the deployment script with the specified tag
+            ##./deploy.sh "${CIRCLE_TAG}"  ## Run the deployment script with the specified tag
 
 workflows:
   version: 2
