@@ -11,9 +11,8 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-      - run:
-          name: Install dependencies
-          command: npm install
+    only:
+      - main
 
   test:
     docker:
@@ -22,9 +21,10 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-      - run:
-          name: Run tests
-          command: npm run test
+    only:
+      - main
+    requires:
+      - build
 
   build-and-push:
     executor: docker/docker
@@ -39,10 +39,12 @@ jobs:
       - docker/build:
           image: xxnlxzx/assignment4.5
           tag: << parameters.tag >>
-      - docker/push:
-          image: xxnlxzx/assignment4.5
-          tag: << parameters.tag >>
-
+    only:
+      - /^v.*/
+    filters:
+      tags:
+        only: /^v.*/
+      
   deploy:
     executor: docker/docker
     parameters:
@@ -59,36 +61,25 @@ jobs:
           image: xxnlxzx/assignment4.5
           tag: << parameters.tag >>
           command: deploy.sh
+    only:
+      - /^v.*/
+    filters:
+      tags:
+        only: /^v.*/
 
 workflows:
   version: 2
   simple_workflow:
     jobs:
-      - build:
-          filters:
-            branches:
-              only: main
-      - test:
-          requires:
-            - build
-          filters:
-            branches:
-              only: main
+      - build
+      - test
       - build-and-push:
+          parameters:
+            tag: "0.1.0"
           requires:
             - test
-          filters:
-            tags:
-              only: /^v.*/
-          parameters:
-            tag:
-              type: string
       - deploy:
+          parameters:
+            tag: "0.1.0"
           requires:
             - build-and-push
-          filters:
-            tags:
-              only: /^v.*/
-          parameters:
-            tag:
-              type: string
