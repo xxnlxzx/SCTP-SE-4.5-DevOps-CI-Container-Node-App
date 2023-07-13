@@ -27,7 +27,7 @@ jobs:
           command: npm run test
 
   build-and-push:
-    executor: docker/docker
+    executor: docker/default
     steps:
       - setup_remote_docker
       - checkout
@@ -40,7 +40,7 @@ jobs:
           tag: '${CIRCLE_TAG}'
 
   deploy:
-    executor: docker/docker
+    executor: docker/default
     steps:
       - checkout
       - run:
