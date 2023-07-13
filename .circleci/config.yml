@@ -71,7 +71,7 @@ workflows:
       - build-and-push:
           filters:
             tags:
-              only: /.*/
+              only: /^v.*$/  # Match tags starting with "v"
             branches:
               ignore:
                 - main
@@ -80,7 +80,7 @@ workflows:
       - deploy:
           filters:
             tags:
-              only: /.*/
+              only: /^v.*$/  # Match tags starting with "v"
             branches:
               ignore:
                 - main
