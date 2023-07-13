@@ -80,6 +80,9 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+          parameters:
+            tag:
+              type: string
       - deploy:
           requires:
             - build-and-push
