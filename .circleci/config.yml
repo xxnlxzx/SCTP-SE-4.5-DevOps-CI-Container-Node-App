@@ -11,10 +11,9 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-    filters:
-      branches:
-        only:
-          - main
+      - run:
+          name: Install dependencies
+          command: npm install
 
   test:
     docker:
@@ -23,70 +22,44 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-    requires:
-      - build
-    filters:
-      branches:
-        only:
-          - main
+      - run:
+          name: Run tests
+          command: npm run test
 
   build-and-push:
-    executor: docker/docker
-    parameters:
-      tag:
-        type: string
-        default: "0.1.0"
+    executor: docker/default
     steps:
       - setup_remote_docker
       - checkout
       - docker/check
-      - docker/build:
-          image: xxnlxzx/assignment4.5
-          tag: << parameters.tag >>
-      - docker/push:
-          image: xxnlxzx/assignment4.5
-          tag: << parameters.tag >>
-    filters:
-      tags:
-        only:
-          - /^v.*/
-
-  deploy:
-    executor: docker/docker
-    parameters:
-      tag:
-        type: string
-    steps:
-      - setup_remote_docker
-      - checkout
-      - docker/check
-      - docker/pull:
-          image: xxnlxzx/assignment4.5
-          tag: << parameters.tag >>
-      - docker/run:
-          image: xxnlxzx/assignment4.5
-          tag: << parameters.tag >>
-          command: deploy.sh
-    filters:
-      tags:
-        only:
-          - /^v.*/
+      - run:
+          name: Build and push Docker image
+          command: |
+            echo "Building Docker image..."
+            docker build -t xxnlxzx/assignment4.5:${CIRCLE_TAG} .
+            echo "Pushing Docker image..."
+            docker push xxnlxzx/assignment4.5:${CIRCLE_TAG}
 
 workflows:
   version: 2
   simple_workflow:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                - main
       - test:
           requires:
             - build
+          filters:
+            branches:
+              only:
+                - main
       - build-and-push:
           requires:
             - test
-      - deploy:
-          requires:
-            - build-and-push
-
-default_executors:
-  docker/default:
-    working_directory: ~/repo
+          filters:
+            tags:
+              only:
+                - /^v[0-9]+\.[0-9]+\.[0-9]+$/
