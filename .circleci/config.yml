@@ -35,10 +35,10 @@ jobs:
       - docker/check
       - run:
           name: Building Docker image
-          command: docker build --file=./Dockerfile --tag=docker.io/xxnlxzx/assignment4.5:${CIRCLE_SHA1} . ## Build the Docker image and tag it with the CIRCLE_SHA1 environment variable
+          command: docker build --file=./Dockerfile --tag=docker.io/xxnlxzx/assignment4.6:${CIRCLE_SHA1} . ## Build the Docker image and tag it with the CIRCLE_SHA1 environment variable
       - run:
           name: Pushing Docker image
-          command: docker push docker.io/xxnlxzx/assignment4.5:${CIRCLE_SHA1} ## Build the Docker image and tag it with the CIRCLE_SHA1 environment variable
+          command: docker push docker.io/xxnlxzx/assignment4.6:${CIRCLE_SHA1} ## Build the Docker image and tag it with the CIRCLE_SHA1 environment variable
 
   deploy:
     docker:
