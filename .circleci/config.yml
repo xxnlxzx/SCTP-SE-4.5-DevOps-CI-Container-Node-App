@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
-
+  snyk: snyk/snyk@1.5.0
 jobs:
   build:
     docker:
@@ -11,10 +11,9 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-      - run:
-          name: Installing dependencies...
-          command: npm install
-
+      - run: |
+          echo "Installing dependencies..."
+          npm install
   test:
     docker:
       - image: cimg/node:16.10
@@ -22,60 +21,29 @@ jobs:
       - checkout
       - node/install-packages:
           pkg-manager: npm
-      - run:
-          name: Running tests...
-          command: npm run test
-
-  build-and-push:
+      - run: |
+          echo "Running tests..."
+          npm run test
+  scan:
     docker:
-      - image: circleci/node:16.10
+        - image: cimg/node:16.10
+    environment:
+        IMAGE_NAME: terencegaffudsu/education-space
     steps:
-      - setup_remote_docker
-      - checkout
-      - docker/check
-      - run:
-          name: Building Docker image
-          command: docker build --file=./Dockerfile --tag=docker.io/xxnlxzx/assignment4.6:${CIRCLE_SHA1} . ## Build the Docker image and tag it with the CIRCLE_SHA1 environment variable
-      - run:
-          name: Pushing Docker image
-          command: docker push docker.io/xxnlxzx/assignment4.6:${CIRCLE_SHA1} ## Build the Docker image and tag it with the CIRCLE_SHA1 environment variable
-
-  deploy:
-    docker:
-      - image: circleci/node:16.10
-    steps:
-      - checkout
-      - run:
-          name: Deploying application
-          command: |
-            echo "Deploying version ${CIRCLE_TAG} to production..."  ## Display the version being deployed
-            ##./deploy.sh "${CIRCLE_TAG}"  ## Run the deployment script with the specified tag
+        - checkout
+        - setup_remote_docker      
+        - docker/check
+        - run: docker build -t $IMAGE_NAME .
+        - snyk/scan: 
+            docker-image-name: $IMAGE_NAME
 
 workflows:
-  version: 2
   simple_workflow:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - main
+      - build
       - test:
-          filters:
-            branches:
-              only:
-                - main
           requires:
             - build
-      - build-and-push:
-          filters:
-            tags:
-              only: /.*/
+      - scan:
           requires:
-            - test
-      - deploy:
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build-and-push
+            - build
